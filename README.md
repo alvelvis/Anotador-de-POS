@@ -2,17 +2,22 @@
 
 Primeiro experimento com Machine Learning: um anotador de classes gramaticais treinado a partir dos trigramas das palavras no material *golden*.
 
-[Resultados](#Resultados)
-	[Avaliação de desempenho](#Avaliacao_de_desempenho)
-[Funcionamento](#Funcionamento)
-	[Bibliotecas](#Bibliotecas)
-	[Passo a passo](#Passo_a_passo)
+* [Resultados](#Resultados)
+	* [Avaliação de desempenho](#Avaliação_de_desempenho)
+* [Funcionamento](#Funcionamento)
+	* [Bibliotecas](#Bibliotecas)
+	* [Passo a passo](#Passo_a_passo)
+		* [Entrada](#Entrada)
+		* [tokenizar()](#tokenizar__)
+		* [coletar_material()](#coletar_material__)
+		* [main()](#main__)
+	* [OneHotEncoder](#OneHotEnconder)
 
 # Resultados
 
 Observe a seguinte sentença, retirada do corpus [Bosque](https://github.com/UniversalDependencies/UD_Portuguese-Bosque), partição de *treino*:
 
-	Talvez entusiasmado pela festa da vitória, o Presidente russo afirmou que «chegará o dia em que a Rússia ajudará o Ocidente».
+>Talvez entusiasmado pela festa da vitória, o Presidente russo afirmou que «chegará o dia em que a Rússia ajudará o Ocidente».
 
 No material *golden*, a sentença está anotada da seguinte forma, dispensando-se outras informação que não as de POS:
 
@@ -48,11 +53,12 @@ No material *golden*, a sentença está anotada da seguinte forma, dispensando-s
 
 A mesma sentença, anotada pelo algoritmo aqui descrito e treinado na partição *dev* do [Bosque](https://github.com/UniversalDependencies/UD_Portuguese-Bosque), apresentou a seguinte anotação de POS:
 
-	Talvez_PROPN entusiasmado_VERB por_ADP a_DET festa_NOUN de_ADP a_DET vitória_NOUN ,_PUNCT o_DET Presidente_NOUN russo_PROPN afirmou_VERB que_PRON «_PUNCT chegará_VERB o_DET dia_PROPN em_ADP que_PRON a_DET Rússia_PROPN ajudará_VERB o_DET Ocidente_PROPN »_PUNCT ._PUNCT
+>Talvez_PROPN entusiasmado_VERB por_ADP a_DET festa_NOUN de_ADP a_DET vitória_NOUN ,_PUNCT o_DET Presidente_NOUN russo_PROPN afirmou_VERB que_PRON «_PUNCT chegará_VERB o_DET dia_PROPN em_ADP que_PRON a_DET Rússia_PROPN ajudará_VERB o_DET Ocidente_PROPN »_PUNCT ._PUNCT
+
 
 Temos divergências nos tokens:
 
-1) Talvez (ADJ x PROPN): erro do algoritmo, provavelmente pela frequência de nomes de pessoas com inicial maiúscula que iniciam sentenças;
+1) Talvez (ADV x PROPN): erro do algoritmo, provavelmente pela frequência de nomes de pessoas com inicial maiúscula que iniciam sentenças;
 2) russo (ADJ x PROPN): erro do algoritmo, provavelmente influenciado pela quantidade de nomes de pessoas que acompanham a palavra "Presidente" no corpus;
 3) Ocidente (NOUN x PROPN): ambas as anotações são possíveis.
 
@@ -102,17 +108,17 @@ import sys
 
 **copy** é utilizado para copiar as listas com os trigramas;
 
-**string**.punctuation é o conjunto de caracteres que devemos destacar das sentenças na tokenização. Além dessa pontuação, adicionamos os símbolos "«" e "»".
+**string**.punctuation é o conjunto de caracteres que devemos destacar das sentenças na tokenização. Além dessa pontuação, adicionamos os símbolos "«" e "»";
 
-**re** é utilizado na hora de destacar as contrações em Língua Portuguesa.
+**re** é utilizado na hora de destacar as contrações em Língua Portuguesa;
 
-**sys** é a biblioteca responsável 
+**sys** é a biblioteca responsável por ler a linha de comando que passamos ao programa no terminal.
 
 ## Passo a passo
 
 ### Entrada
 
-A primeira parte do **tagger.py** é a responsável por verificar se ele anotará um dado arquivo descrito na linha de comando ou se o usuário será requisitado para digitar a sentença que deseja que seja anotada:
+A primeira parte do **tagger.py** é a responsável por verificar se ele anotará um dado arquivo descrito na linha de comando do terminal ou se o usuário será requisitado para digitar a sentença que deseja que seja anotada:
 
 ```python
 if __name__ == "__main__":
@@ -122,7 +128,7 @@ if __name__ == "__main__":
 		main(open(sys.argv[1].replace("'", "").replace('"', '').replace("\\", '/').strip(), 'r').read())
 ```
 
-Ambas as opções levam à função "main(sentenca)":
+Ambas as opções levam à função "main()":
 
 ```python
 def main(sentenca):
@@ -135,11 +141,11 @@ def main(sentenca):
 	...
 ```
 
-### tokenizar(sentenca)
+### tokenizar()
 
 A segunda etapa é tokenizar a entrada do usuário, seja o arquivo ou a sentença.
 
-As duas listas a seguir foram mineradas do arquivo **bosque2.3_golden_train_dev_e_teste.conllu** ao se procurar por palavras cujas POS fossem *_*. Ou seja, procuramos por palavras não anotadas que, portanto, eram contrações:
+As duas listas a seguir foram mineradas do arquivo **bosque2.3_golden_train_dev_e_teste.conllu** ao se procurar por palavras cujas POS fossem *underline* ("\_"). Ou seja, procuramos por palavras não anotadas que, portanto, eram contrações:
 
 ```python
 def tokenizar(sentenca):
@@ -156,17 +162,27 @@ A primeira lista foi o resultado direto da extração do arquivo golden. A segun
 Então, ainda dentro da função "tokenizar(sentenca)", é feito o desmembramento das palavras contidas na entrada:
 
 ```python
+def tokenizar(sentenca):
+
+	...
+
 	if len(dettached) == len(contractions):
 		for i, contraction in enumerate(contractions):
 			sentenca = re.sub(r'\b' + contraction + r'\b', dettached[i], sentenca, flags=re.IGNORECASE)
 	else:
 		print('\nNúmero de contrações é diferente do número de desmembramentos.')
 		exit()
+
+	...
 ```
 
 A seguir é feito o destacamento das pontuações (inserindo-se, aqui, os hífens, portanto desmembrando também as palavras compostas, pronomes oblíquos etc.), retornando uma lista em que cada token é um ítem:
 
 ```python
+def tokenizar(sentenca):
+
+	...
+
 	for ponto in string.punctuation + "«»":
 		sentenca = sentenca.replace(ponto, ' ' + ponto + ' ')
 
@@ -174,11 +190,13 @@ A seguir é feito o destacamento das pontuações (inserindo-se, aqui, os hífen
 	print(sentenca)
 
 	return sentenca.split()
+
+	...
 ```
 
-### coletar_material(conllu)
+### coletar_material()
 
-Após a tokenização da entrada, a função "main(sentenca)" chama a função "coletar_material(conllu)", responsável por "treinar" o algoritmo.
+Após a tokenização da entrada, a função "main()" chama a função "coletar_material()", responsável por "treinar" o algoritmo.
 
 Repare que o treino tem sido feito na partição "dev" do Bosque, uma vez que, em materiais maiores, o sistema tem se tornado extremamente pesado e acarretado erros de memória.
 
@@ -190,12 +208,18 @@ def coletar_material(conllu):
 	#remove metadados
 	for a, sentenca in enumerate(conllu):
 		conllu[a] = ["{}\t{}".format(x[1], x[3]) for x in sentenca if not '#' in x and x]
+
+	...
 ```
 
 Então, é hora de criar os trigramas, não anotados. Este constituirá o material "features" que alimentará o sistema de predição:
 
 ```python
-#cria as triplas cruas
+def coletar_material(conllu):
+
+	...
+
+	#cria as triplas cruas
 	cru = [[token.split('\t')[0] for token in sentenca] for sentenca in conllu]
 	palavras = copy.deepcopy(cru)
 	for a, sentenca in enumerate(palavras):
@@ -212,11 +236,17 @@ Então, é hora de criar os trigramas, não anotados. Este constituirá o materi
 				print(token, sentenca)
 				exit()
 	palavras = [tripla.split('\t') for tripla in estrutura_dados.PrintarUD(palavras).split('\n') if tripla]
+
+	...
 ```
 
 Depois, criamos a lista de "rótulos" (labels) que se encaixam nas "features", e retornamos um dicionário com ambas as listas para alimentar o preditor:
 
 ```python
+def coletar_material(conllu):
+
+	...
+
 	#cria os rótulos para cada tripla
 	rotulos = [[token.split('\t')[1] for token in sentenca] for sentenca in conllu]
 	rotulos = [[classe] for classe in estrutura_dados.PrintarUD(rotulos).split('\n') if classe]
@@ -224,13 +254,17 @@ Depois, criamos a lista de "rótulos" (labels) que se encaixam nas "features", e
 	return {"features": palavras, "labels": rotulos}
 ```
 
-### main(sentenca)
+### main()
 
 Voltando à função principal, já tendo tokenizado a entrada do programa e coletado o material de treino, é hora de preparar os trigramas do material de entrada e de, finalmente, montar a árvore de decisões.
 
 Aqui, preparamos os trigramas da entrada do programa, de forma análoga à que usamos para montar os trigramas do material de treino:
 
 ```python
+def main(sentenca):
+
+	...
+
 	tripla_sentenca = copy.deepcopy(sentenca)
 	for i, token in enumerate(sentenca):
 		if i == 0 and i + 1 < len(sentenca):
@@ -244,11 +278,17 @@ Aqui, preparamos os trigramas da entrada do programa, de forma análoga à que u
 		else:
 			print(token, sentenca)
 			exit()
+
+	...
 ```
 
 Então, criamos um [OneHotEncoder](#OneHotEncoder) para cada lista (features e labels) e fazemos a predição:
 
 ```python
+def main(sentenca):
+
+	...
+
 	pal = preprocessing.OneHotEncoder(handle_unknown="ignore")
 	rot = preprocessing.OneHotEncoder(handle_unknown="ignore")
 
@@ -259,11 +299,17 @@ Então, criamos um [OneHotEncoder](#OneHotEncoder) para cada lista (features e l
 		inverso = rot.inverse_transform(predicao)
 		print(sentenca[i], inverso, predicao)
 		sentenca[i] = "{}_{}".format(sentenca[i], inverso[0][0])
+
+	...
 ```
 
 No fim, juntamos as palavras com um espaço entre elas e mandamos para o terminal:
 
 ```python
+def main(sentenca):
+
+	...
+
 	sentenca = " ".join(sentenca)
 
 	print('')
@@ -272,7 +318,7 @@ No fim, juntamos as palavras com um espaço entre elas e mandamos para o termina
 
 Fim do algoritmo.
 
-#### OneHotEncoder
+## OneHotEncoder
 
 O OneHotEncoder é necessários pois estamos lidando com *strings* tanto em relação às palavras que queremos anotar quanto aos rótulos das anotações.
 
