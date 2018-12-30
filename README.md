@@ -56,13 +56,14 @@ A mesma sentença, anotada pelo algoritmo aqui descrito e treinado na partição
 >Talvez_PROPN entusiasmado_VERB por_ADP a_DET festa_NOUN de_ADP a_DET vitória_NOUN ,_PUNCT o_DET Presidente_NOUN russo_PROPN afirmou_VERB que_PRON «_PUNCT chegará_VERB o_DET dia_PROPN em_ADP que_PRON a_DET Rússia_PROPN ajudará_VERB o_DET Ocidente_PROPN »_PUNCT ._PUNCT
 
 
-Temos divergências nos tokens:
+Temos 4 divergências e 23 convergências na comparação das anotações. Olhando para as divergências, veremos os trigramas:
 
-1) Talvez (ADV x PROPN): erro do algoritmo, provavelmente pela frequência de nomes de pessoas com inicial maiúscula que iniciam sentenças;
-2) russo (ADJ x PROPN): erro do algoritmo, provavelmente influenciado pela quantidade de nomes de pessoas que acompanham a palavra "Presidente" no corpus;
-3) Ocidente (NOUN x PROPN): ambas as anotações são possíveis.
+1) (@, Talvez, entusiasmado): ADV x PROPN --> erro do algoritmo, provavelmente pela frequência de nomes de pessoas com inicial maiúscula que iniciam sentenças no corpus;
+2) (Presidente, russo, afirmou): ADJ x PROPN --> erro do algoritmo, provavelmente influenciado pela quantidade de nomes de pessoas que acompanham a palavra "Presidente" no corpus;
+3) (afirmou, que, «): SCONJ x PRON --> erro do algoritmo;
+4) (o, Ocidente, »): NOUN x PROPN --> ambas as anotações são possíveis.
 
-Trata-se de um resultado similar, principalmente ao se levar em conta que a sentença anotada (retirada da partição "train" do Bosque) não figurava no material em que o algoritmo foi treinado (partição "dev").
+Trata-se de um resultado animador, principalmente ao se levar em conta que a sentença anotada (retirada da partição "train" do Bosque) não figurava no material em que o algoritmo foi treinado (partição "dev").
 
 ## Avaliação de desempenho
 
