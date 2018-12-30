@@ -81,6 +81,8 @@ Então, a partir do script **aval.py**, calculou-se a precisão das anotações 
 
 Como resultado, conquistamos uma precisão de %.
 
+[**↥ voltar ao topo**](#anotador-de-pos)
+
 # Funcionamento
 
 O anotador de POS baseia suas predições em uma Árvore de Decisões da biblioteca Scikit-Learn, em Python 3.
@@ -114,6 +116,8 @@ import sys
 **re** é utilizado na hora de destacar as contrações em Língua Portuguesa;
 
 **sys** é a biblioteca responsável por ler a linha de comando que passamos ao programa no terminal.
+
+[**↥ voltar ao topo**](#anotador-de-pos)
 
 ## Passo a passo
 
@@ -319,6 +323,8 @@ def main(sentenca):
 
 Fim do algoritmo.
 
+[**↥ voltar ao topo**](#anotador-de-pos)
+
 ## OneHotEncoder
 
 O OneHotEncoder é necessários pois estamos lidando com *strings* tanto em relação às palavras que queremos anotar quanto aos rótulos das anotações.
@@ -330,3 +336,9 @@ Observe as matrizes que representam cada uma das palavras a seguir, transformada
 	[['NOUN']] [[0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
 	[['VERB']] [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]]
 	[['PROPN']] [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]]
+
+[**↥ voltar ao topo**](#anotador-de-pos)
+
+# Observações
+
+[**↥ voltar ao topo**](#anotador-de-pos)
