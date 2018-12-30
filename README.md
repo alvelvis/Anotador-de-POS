@@ -3,10 +3,10 @@
 Primeiro experimento com Machine Learning: um anotador de classes gramaticais treinado a partir dos trigramas das palavras no material *golden*.
 
 * [Resultados](#Resultados)
-	* [Avaliação de desempenho](#Avaliação_de_desempenho)
+	* [Avaliação de desempenho](#Avaliação-de-desempenho)
 * [Funcionamento](#Funcionamento)
 	* [Bibliotecas](#Bibliotecas)
-	* [Passo a passo](#Passo_a_passo)
+	* [Passo a passo](#Passo-a-passo)
 		* [Entrada](#Entrada)
 		* [tokenizar()](#tokenizar)
 		* [coletar_material()](#coletar_material)
