@@ -8,9 +8,9 @@ Primeiro experimento com Machine Learning: um anotador de classes gramaticais tr
 	* [Bibliotecas](#Bibliotecas)
 	* [Passo a passo](#Passo_a_passo)
 		* [Entrada](#Entrada)
-		* [tokenizar()](#tokenizar__)
-		* [coletar_material()](#coletar_material__)
-		* [main()](#main__)
+		* [tokenizar()](#tokenizar)
+		* [coletar_material()](#coletar_material)
+		* [main()](#main)
 	* [OneHotEncoder](#OneHotEnconder)
 
 # Resultados
@@ -82,7 +82,7 @@ Como resultado, conquistamos uma precisão de %.
 
 # Funcionamento
 
-O anotador de classes gramaticais baseia suas predições em uma Árvore de Decisões da biblioteca Scikit-Learn, em Python 3.
+O anotador de POS baseia suas predições em uma Árvore de Decisões da biblioteca Scikit-Learn, em Python 3.
 
 O material de treino do anotador é sempre um arquivo *.conllu* no formato Universal Dependencies. O código processa o arquivo conllu de tal maneira que cada unidade de treino, chamada "feature", é uma tripla, ou mais especificamente, um trigrama. Ou seja, cada palavra que alimenta o algoritmo, além de estar acompanhada da sua classe de palavra anotada no golden, tem também as duas palavras vizinhas que a acompanham. Assim, o anotador de POS, ao realizar suas tarefas, sempre prestará atenção ao contexto dos tokens.
 
