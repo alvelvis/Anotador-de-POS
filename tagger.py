@@ -4,6 +4,7 @@ from sklearn import tree
 import copy
 import string
 import re
+import sys
 
 def tokenizar(sentenca):
 
@@ -15,18 +16,18 @@ def tokenizar(sentenca):
 		for i, contraction in enumerate(contractions):
 			sentenca = re.sub(r'\b' + contraction + r'\b', dettached[i], sentenca, flags=re.IGNORECASE)
 	else:
-		print('Número de contrações é diferente do número de transformações.')
+		print('\nNúmero de contrações é diferente do número de desmembramentos.')
 		exit()
 
-	for ponto in string.punctuation:
+	for ponto in string.punctuation + "«»":
 		sentenca = sentenca.replace(ponto, ' ' + ponto + ' ')
 
-	print('Contrações desfeitas:')
+	print('\nContrações desfeitas:')
 	print(sentenca)
 
 	return sentenca.split()
 
-def coletar_material(conllu, sentence):
+def coletar_material(conllu):
 
 	#remove metadados
 	for a, sentenca in enumerate(conllu):
@@ -55,12 +56,12 @@ def coletar_material(conllu, sentence):
 	rotulos = [[classe] for classe in estrutura_dados.PrintarUD(rotulos).split('\n') if classe]
 
 	#verifica palavras na sentença que não têm no dataset
-	print('Palavras não encontradas no dataset (recebendo POS "X"):')
-	for palavra in sentence:
-		if not any(palavra in x for x in palavras):
-			palavras.append([palavra, palavra, palavra])
-			rotulos.append(['X'])
-			print(palavra)
+	#print('\nPalavras não encontradas no dataset (recebendo POS "X"):')
+	#for palavra in sentence:
+		#if not any(palavra in x for x in palavras):
+			#palavras.append([palavra, palavra, palavra])
+			#srotulos.append(['X'])
+			#print(palavra)
 
 	return {"features": palavras, "labels": rotulos}
 
@@ -68,13 +69,8 @@ def main(sentenca):
 
 	sentenca = tokenizar(sentenca)
 
-	conllu = estrutura_dados.LerUD('bosque2.3_golden_teste.conllu')
-	material = coletar_material(conllu, sentenca)
-
-	pal = preprocessing.OneHotEncoder()
-	rot = preprocessing.OneHotEncoder()
-
-	classifier = tree.DecisionTreeClassifier()
+	conllu = estrutura_dados.LerUD('bosque2.3_golden_dev.conllu')
+	material = coletar_material(conllu)
 
 	tripla_sentenca = copy.deepcopy(sentenca)
 	for i, token in enumerate(sentenca):
@@ -90,18 +86,26 @@ def main(sentenca):
 			print(token, sentenca)
 			exit()
 
+	pal = preprocessing.OneHotEncoder(handle_unknown="ignore")
+	rot = preprocessing.OneHotEncoder(handle_unknown="ignore")
+
+	classifier = tree.DecisionTreeClassifier()
+
 	for i, tripla in enumerate(tripla_sentenca):
 		predicao = classifier.fit(pal.fit_transform(material["features"]).toarray(), rot.fit_transform(material["labels"]).toarray()).predict(pal.fit(material["features"]).transform([tripla]).toarray())
 		inverso = rot.inverse_transform(predicao)
 		print(sentenca[i], inverso, predicao)
 		sentenca[i] = "{}_{}".format(sentenca[i], inverso[0][0])
 
-	sentenca = "\n".join(sentenca)
+	sentenca = " ".join(sentenca)
 
 	print('')
 	print(sentenca)
 
 if __name__ == "__main__":
-	main(input('Sentença: '))
+	if len(sys.argv) == 1:
+		main(input('Sentença: '))
+	else:
+		main(open(sys.argv[1].replace("'", "").replace('"', '').replace("\\", '/').strip(), 'r').read())
 
 
