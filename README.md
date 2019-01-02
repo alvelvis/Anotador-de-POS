@@ -11,9 +11,8 @@ O Anotador de POS pode ser testado on-line pelo endereço: http://anotador-de-po
 	* [Passo a passo](#Passo-a-passo)
 		* [Entrada](#Entrada)
 		* [tokenizar()](#tokenizar)
-		* [coletar_material()](#coletar_material)
 		* [main()](#main)
-	* [LabelEncoder](#LabelEncoder)
+	* [LabelEncoder e OneHotEncoder](#LabelEncoder-e-OneHotEncoder)
 
 # Resultados
 
