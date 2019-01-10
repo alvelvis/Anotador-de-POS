@@ -1,8 +1,8 @@
-#/usr/bin/python3
+#!/usr/bin/env python3
 import estrutura_dados
 from sklearn import preprocessing
 from sklearn import tree
-import pickle as jb
+import pickle
 import copy
 import string
 import re
@@ -24,7 +24,7 @@ def tokenizar(sentenca):
 	for ponto in string.punctuation + "«»":
 		sentenca = sentenca.replace(ponto, ' ' + ponto + ' ')
 
-	print('\nSentença normalizada:\n---------------------')
+	print('\nSentença tokenizada:\n--------------------')
 	print(sentenca)
 
 	return sentenca.replace('\n',' <space> ').split()
@@ -102,25 +102,40 @@ def treinar(material_treino):
 	material['labels'] = rot.transform(material['labels'])
 
 	classifier = tree.DecisionTreeClassifier().fit(material["features"], material["labels"])
+	acuracia = 'Acurácia: ' + str(classifier.score(material["features"], material["labels"]) * 100) + '%'
+	print(acuracia)
+	open(material_treino.rsplit('.', 1)[0] + '.joblib4', 'w').write(acuracia)
 
-	jb.dump(classifier, open(material_treino.rsplit('.', 1)[0] + '.joblib', 'wb'))
-	jb.dump(pal, open(material_treino.rsplit('.', 1)[0] + '.joblib2', 'wb'))
-	jb.dump(rot, open(material_treino.rsplit('.', 1)[0] + '.joblib3', 'wb'))
+	with open(material_treino.rsplit('.', 1)[0] + '.joblib', 'wb') as f:
+		pickle.dump(classifier, f)
+
+	with open(material_treino.rsplit('.', 1)[0] + '.joblib2', 'wb') as f:
+		pickle.dump(pal, f)
+
+	with open(material_treino.rsplit('.', 1)[0] + '.joblib3', 'wb') as f:
+		pickle.dump(rot, f)
+
 
 def main(sentenca, modo = "bosque2.3_golden_train.joblib"):
 
 	sentenca = tokenizar(sentenca)
 	tripla_sentenca = montar_tuplas(sentenca)
 
-	classifier = jb.loads(open(modo, 'rb').read())
-	pal = jb.loads(open(modo + '2', 'rb').read())
-	rot = jb.loads(open(modo + '3', 'rb').read())
+	with open(modo, 'rb') as f:
+		classifier = pickle.load(f)
+
+	with open(modo + '2', 'rb') as f:
+		pal = pickle.load(f)
+
+	with open(modo + '3', 'rb') as f:
+		rot = pickle.load(f)
 
 	for i, tripla in enumerate(tripla_sentenca):
 		predicao = classifier.predict(pal.transform([tripla]))
+		proba = classifier.predict_proba(pal.transform([tripla]))
 		inverso = rot.inverse_transform(predicao)
 
-		sentenca[i] = "{}_{}".format(sentenca[i], inverso[0])
+		sentenca[i] = f"{sentenca[i]}_{inverso[0]}"
 
 	sentenca = " ".join(sentenca)
 

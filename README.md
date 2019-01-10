@@ -43,7 +43,7 @@ A mesma sentença, anotada pelo algoritmo aqui descrito e treinado na partição
 
 >Gosto_NOUN de_ADP levar_VERB a_DET sério_ADJ o_DET meu_DET papel_NOUN de_ADP consultor_NOUN encartado_VERB ._PUNCT
 
-Observamos divergênicas nos seguintes tokens:
+Observamos divergências nos seguintes tokens:
 
 1. Gosto: NOUN (sistema) - VERB (golden)
 2. sério: ADJ (sistema) - NOUN (golden)
@@ -58,7 +58,7 @@ Primeiro, foi utilizado o script **limpar_conllu.py** para, a partir do arquivo 
 
 Depois, o anotador de POS foi chamado para anotar o arquivo de sentenças cruas:
 
-	$ python3 tagger.py ../teste_limpo.txt > ../teste_anotado.txt
+	$ python3 tagger.py ../bosque_teste_limpo.txt > ../bosque_teste_bosque.txt
 
 O resultado consta no arquivo **teste_anotado.txt**.
 
@@ -66,7 +66,7 @@ Então, a partir do script **aval.py**, calculou-se a precisão das tokenizaçõ
 
 Os resultados são os seguintes:
 
-	Arquivo anotado pelo sistema: ../teste_anotado.txt
+	Arquivo anotado pelo sistema: ../bosque_teste_bosque.txt
 	Arquivo golden: bosque2.3_golden_teste.conllu
 
 	Resultados da avaliação
@@ -81,7 +81,7 @@ Os resultados são os seguintes:
 	---------------
 	Tokens iguais: 10032
 	Acertos de POS: 8372
-	Precisão: 83.45295055821371%
+	Precisão: 84.45295055821371%
 
 
 [**↥ voltar ao topo**](#anotador-de-pos)
@@ -242,8 +242,6 @@ def main(sentenca):
 	print('')
 	print(sentenca)
 ```
-
-Fim do algoritmo.
 
 [**↥ voltar ao topo**](#anotador-de-pos)
 
