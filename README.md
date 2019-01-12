@@ -58,9 +58,9 @@ Primeiro, foi utilizado o script **limpar_conllu.py** para, a partir do arquivo 
 
 Depois, o anotador de POS foi chamado para anotar o arquivo de sentenças cruas:
 
-	$ python3 tagger.py ../bosque_teste_limpo.txt > ../bosque_teste_bosque.txt
+	$ python3 tagger.py ../bosque_teste_limpo.txt > ../bosque_teste_anotado_bosque.txt
 
-O resultado consta no arquivo **teste_anotado.txt**.
+O resultado consta no arquivo **bosque_teste_anotado_bosque.txt**.
 
 Então, a partir do script **aval.py**, calculou-se a precisão das tokenizações e anotações ao comparar-se o "teste" anotado pelo algoritmo e o "teste" anotado por humanos.
 
